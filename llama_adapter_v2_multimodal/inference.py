@@ -14,9 +14,9 @@ from PIL import Image
 from tqdm import tqdm
 
 parser = argparse.ArgumentParser(description="Demo")
-parser.add_argument('--llama_dir', type=str, default="../MiniGPT-4/vicuna_prep")
-parser.add_argument('--input_csv', type=str, default='../MiniGPT-4/input_csv/visit_instructions_700.csv')
-parser.add_argument('--output_csv', type=str, default='../MiniGPT-4/output_csv/llama_adapter_v2.csv')
+parser.add_argument('--llama_dir', type=str, default="../../MiniGPT-4/vicuna_prep/llama-7b/")
+parser.add_argument('--input_csv', type=str, default='../../MiniGPT-4/input_csv/visit_instructions_700.csv')
+parser.add_argument('--output_dir', type=str, default='../../MiniGPT-4/output_csv/')
 parser.add_argument('--model_name', type=str, default='LlamaAdapter-v2')
 parser.add_argument('--verbose', action='store_true', default=False)
 args = parser.parse_args()
@@ -50,6 +50,11 @@ def download_image(url, file_path):
 
 
 if __name__ == '__main__':
+    # check output directory
+    if not os.path.exists(args.output_dir):
+        os.makedirs(args.output_dir)
+    args.output_csv = os.path.join(args.output_dir, f'{args.model_name.lower()}.csv')
+
     # Load model
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model, preprocess = llama.load("BIAS-7B", args.llama_dir, device)
@@ -65,7 +70,12 @@ if __name__ == '__main__':
         if args.verbose:
             print(row)
 
-        image_url_list = list(eval(row['images']))
+        if 'Input.image_url' in row.keys():
+            image_url_list = [row['Input.image_url']]
+        elif 'image' in row.keys():
+            image_url_list = [row['image']]
+        else:
+            image_url_list = list(eval(row['images']))
 
         if len(image_url_list) > 1:
             llm_prediction = '[SKIPPED]'
