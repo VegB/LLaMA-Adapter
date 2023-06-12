@@ -14,7 +14,7 @@ from PIL import Image
 from tqdm import tqdm
 
 parser = argparse.ArgumentParser(description="Demo")
-parser.add_argument('--llama_dir', type=str, default="../../MiniGPT-4/vicuna_prep/llama_ckpt/")
+parser.add_argument('--llama_dir', type=str, default="../../MiniGPT-4/vicuna_prep/llama_ckpts/")
 parser.add_argument('--input_csv', type=str, default='../../MiniGPT-4/input_csv/visit_instructions_700.csv')
 parser.add_argument('--output_dir', type=str, default='../../MiniGPT-4/output_csv/')
 parser.add_argument('--model_name', type=str, default='LlamaAdapter-v2')
